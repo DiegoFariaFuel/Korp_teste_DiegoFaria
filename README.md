@@ -27,13 +27,14 @@
 
 ## 🏗️ Arquitetura
 
+```mermaid
 graph TD
     A[Cliente] -->|HTTP| B[Nginx]
-    B -->|8080| C[servico-estoque<br>(Go)]
-    B -->|5000| D[servico-faturamento<br>(.NET 8)]
-    C --> E[PostgreSQL<br>(estoque)]
-    D --> F[PostgreSQL<br>(faturamento)]
-    C --> G[Redis<br>(lock + cache)]
+    B -->|8080| C[servico-estoque<br/>Go]
+    B -->|5000| D[servico-faturamento<br/>.NET 8]
+    C --> E[PostgreSQL<br/>estoque]
+    D --> F[PostgreSQL<br/>faturamento]
+    C --> G[Redis<br/>lock + cache]
     D --> G
 
     classDef go fill:#00ADD8,color:#fff
@@ -47,7 +48,6 @@ graph TD
     class E,F db
     class G redis
     class B nginx
-
 
 ## 🛠️ Tecnologias
 
