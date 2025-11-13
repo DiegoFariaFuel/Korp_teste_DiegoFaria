@@ -1,0 +1,73 @@
+# === DOCKER ===
+.docker/
+docker-compose.override.yml
+docker-compose.local.yml
+
+# === GO (servico-estoque) ===
+# Binários
+main
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go workspace
+/go/
+/bin/
+/pkg/
+*.out
+
+# Go test
+*.test
+*.prof
+
+# Go mod
+/go.mod
+/go.sum
+
+# === .NET (servico-faturamento) ===
+# Binários e pastas de build
+/bin/
+/obj/
+/artifacts/
+
+# Pacotes NuGet
+*.nupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Arquivos de configuração local
+appsettings.Development.json
+appsettings.Local.json
+
+# === IDEs ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+*.log
+logs/
+
+# === Ambiente ===
+.env
+.env.local
+.env.*.local
+
+# === Dados locais ===
+pgdata/
+redis-data/
+
+# === Outros ===
+*.tmp
+*.bak
+*.cache
+
