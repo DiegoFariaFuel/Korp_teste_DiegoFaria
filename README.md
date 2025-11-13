@@ -48,6 +48,8 @@ graph TD
     class E,F db
     class G redis
     class B nginx
+```
+
 
 ## 🛠️ Tecnologias
 
