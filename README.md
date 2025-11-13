@@ -1,75 +1,107 @@
-Korp_teste_DiegoFaria
-Sistema de Notas Fiscais com Microserviços em Go + .NET 8
-Docker | PostgreSQL | Redis | Swagger | CI/CD |
+# Korp_teste_DiegoFaria
 
-Docker
-Go
-.NET
-PostgreSQL
-Redis
-GitHub Actions
+**Sistema de Notas Fiscais com Microserviços em Go + .NET 8**  
+`Docker` `Go` `.NET 8` `PostgreSQL` `Redis` `Swagger` `CI/CD`
 
-Funcionalidades
-Serviço,Endpoint,Descrição
-Estoque,GET /health,Health check com uptime
-,GET /api/produtos,Lista com paginação
-,POST /api/produtos/reservar,Reserva com lock distribuído Redis
-Faturamento,GET /api/notas-fiscais,Lista com filtro por data/status
-,POST /api/notas-fiscais,Emissão com idempotência
-,POST /api/notas-fiscais/{id}/imprimir,Baixa estoque + PDF
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Go](https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white)](https://go.dev/)
+[![.NET](https://img.shields.io/badge/.NET-512BD4?style=flat&logo=.net&logoColor=white)](https://dotnet.microsoft.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white)](https://redis.io/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat&logo=github-actions&logoColor=white)](https://github.com/features/actions)
 
-Arquitetura
+---
 
+## 📋 Funcionalidades
+
+| Serviço       | Endpoint                            | Descrição                                  |
+|---------------|-------------------------------------|--------------------------------------------|
+| **Estoque**   | `GET /health`                       | Health check com uptime                    |
+|               | `GET /api/produtos`                 | Lista com paginação                        |
+|               | `POST /api/produtos/reservar`       | Reserva com *lock distribuído* via Redis    |
+| **Faturamento** | `GET /api/notas-fiscais`          | Lista com filtro por data/status           |
+|               | `POST /api/notas-fiscais`           | Emissão com *idempotência*                 |
+|               | `POST /api/notas-fiscais/{id}/imprimir` | Baixa estoque + gera PDF               |
+
+---
+
+## 🏗️ Arquitetura
+
+```mermaid
 graph TD
-    A[Cliente] -->|HTTP| B(Nginx)
-    B -->|8080| C[servico-estoque (Go)]
-    B -->|5000| D[servico-faturamento (.NET 8)]
-    C --> E[PostgreSQL (estoque)]
-    D --> F[PostgreSQL (faturamento)]
-    C --> G[Redis (lock + cache)]
+    A[Cliente] -->|HTTP| B[Nginx]
+    B -->|8080| C[servico-estoque<br/>(Go)]
+    B -->|5000| D[servico-faturamento<br/>(.NET 8)]
+    C --> E[PostgreSQL<br/>(estoque)]
+    D --> F[PostgreSQL<br/>(faturamento)]
+    C --> G[Redis<br/>(lock + cache)]
     D --> G
+```
 
-Tecnologias
+---
 
-Go 1.23 → servico-estoque
-.NET 8 → servico-faturamento
-PostgreSQL 16
-Redis 7
-Docker + Docker Compose
-Nginx (proxy reverso)
-GitHub Actions (CI/CD)
+## 🛠️ Tecnologias
 
-Como Rodar
+| Tecnologia       | Versão       | Uso                            |
+|------------------|--------------|--------------------------------|
+| Go               | `1.23`       | `servico-estoque`              |
+| .NET             | `8`          | `servico-faturamento`          |
+| PostgreSQL       | `16`         | Bancos `estoque` e `faturamento` |
+| Redis            | `7`          | Lock distribuído e cache       |
+| Docker + Compose | -            | Contêineres e orquestração     |
+| Nginx            | -            | Proxy reverso                  |
+| GitHub Actions   | -            | CI/CD                          |
 
-# Clone o projeto
+---
+
+## 🚀 Como Rodar
+
+### Pré-requisitos
+- Docker Desktop
+- Docker Compose
+- Git
+- `jq` (opcional, para formatar JSON)
+
+### Instalação
+
+```bash
+# 1. Clone o projeto
 git clone https://github.com/DiegoFariaFuel/Korp_teste_DiegoFaria.git
 cd Korp_teste_DiegoFaria
 
-# Alias útil
+# 2. Alias útil (opcional)
 echo "alias dc='docker compose'" >> ~/.bashrc && source ~/.bashrc
 
-# Suba tudo
+# 3. Suba os serviços
 dc up -d --build
 
-# Aguarde
+# 4. Aguarde inicialização (~20s)
 sleep 20
+```
 
-Endpoints
-Estoque (localhost:8080)
-GET /health
-GET /api/produtos?page=1&size=10
+### Endpoints Disponíveis
+
+#### **Estoque** → `http://localhost:8080`
+```
+GET  /health
+GET  /api/produtos?page=1&size=10
 POST /api/produtos
 POST /api/produtos/reservar
+```
 
-Faturamento (localhost:5000)
-GET /api/notas-fiscais
+#### **Faturamento** → `http://localhost:5000`
+```
+GET  /api/notas-fiscais
 POST /api/notas-fiscais
 POST /api/notas-fiscais/{id}/imprimir
-GET /api/notas-fiscais/{id}/pdf
+GET  /api/notas-fiscais/{id}/pdf
+```
 
+---
 
-Exemplo de Emissão de Nota Fiscal
+## 💡 Exemplo: Emissão de Nota Fiscal
 
+```bash
 curl -X POST http://localhost:5000/api/notas-fiscais \
   -H "Content-Type: application/json" \
   -d '{
@@ -83,57 +115,100 @@ curl -X POST http://localhost:5000/api/notas-fiscais \
       }
     ]
   }' | jq .
+```
 
-Comandos Úteis
+---
 
-# Iniciar
+## ⚙️ Comandos Úteis
+
+```bash
+# Iniciar serviços
 dc up -d
 
-# Parar e limpar
+# Parar e remover volumes
 dc down -v
 
-# Ver logs
+# Ver logs em tempo real
 dc logs -f estoque
 dc logs -f faturamento
+dc logs -f nginx
 
-# Rebuild
+# Reconstruir imagens
 dc build --no-cache
 
-# Banco de Dados
+# Acessar bancos de dados
 psql -h localhost -p 5432 -U postgres -d faturamento
 psql -h localhost -p 5433 -U postgres -d estoque
 
-CI/CD (GitHub Actions)
+# Ver containers rodando
+dc ps
+
+# Ver redes
+dc network ls
+```
+
+---
+
+## 🗄️ Banco de Dados
+
+| Parâmetro       | Valor                     |
+|-----------------|---------------------------|
+| **Host**        | `localhost`               |
+| **Porta (Faturamento)** | `5432`              |
+| **Porta (Estoque)**     | `5433`              |
+| **Bancos**      | `faturamento`, `estoque`  |
+| **Usuário**     | `postgres`                |
+| **Senha**       | `postgres`                |
+
+---
+
+## 🔄 CI/CD com GitHub Actions
+
+```yaml
 name: CI/CD
 on: [push, pull_request]
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     services:
-      postgres: { image: postgres:16, env: { POSTGRES_PASSWORD: postgres }, ports: [5432:5432] }
-      redis: { image: redis:7, ports: [6379:6379] }
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: [5432:5432]
+      redis:
+        image: redis:7
+        ports: [6379:6379]
     steps:
       - uses: actions/checkout@v4
       - name: Build Docker
         run: docker compose build
       - name: Test
         run: docker compose up --abort-on-container-exit
+```
 
+---
 
-Banco de Dados
-Host: localhost
-Porta Faturamento: 5432
-Porta Estoque: 5433
-Banco: faturamento / estoque
-Usuário: postgres
-Senha: postgres
+## 📈 Próximos Passos
 
-Próximos Passos
+- [ ] Autenticação JWT + RBAC  
+- [ ] Front-end em **React + Tailwind** ou **Angular**  
+- [ ] Monitoramento com **Prometheus + Grafana**  
+- [ ] Deploy na **AWS (ECS + Fargate)**  
+- [ ] Testes E2E com **Playwright**
 
- Autenticação JWT + RBAC
- Front-end em React + Tailwind ou Angular
- Monitoramento com Prometheus + Grafana
- Deploy na AWS (ECS + Fargate)
- Testes E2E com Playwright
+---
 
- MIT License
+## 📄 Licença
+
+**MIT License** – Veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+---
+
+<div align="center">
+  
+**Feito com 💙 por Diego Faria**  
+<a href="https://github.com/DiegoFariaFuel"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
+<a href="https://www.linkedin.com/in/diegofaria"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
+
+</div>
