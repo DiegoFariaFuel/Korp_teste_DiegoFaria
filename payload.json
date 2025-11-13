@@ -1,0 +1,11 @@
+{
+  "clienteId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "itens": [
+    {
+      "produtoId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "descricaoProduto": "Campeão do Docker",
+      "quantidade": 1,
+      "valorUnitario": 999999.00
+    }
+  ]
+}
